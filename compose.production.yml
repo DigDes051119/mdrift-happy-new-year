@@ -1,0 +1,125 @@
+name: mdrift
+
+x-logging: &bounded-logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "3"
+
+services:
+  app:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    environment:
+      NODE_OPTIONS: --max-old-space-size=384
+      MALLOC_ARENA_MAX: "2"
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      SITE_INDEXABLE: ${SITE_INDEXABLE:-false}
+    volumes:
+      - next_cache:/app/.next/cache
+    networks:
+      - web
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    mem_limit: 512m
+    cpus: 0.75
+    pids_limit: 100
+    logging: *bounded-logging
+
+  nginx:
+    image: nginx:1.28.3-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+    restart: unless-stopped
+    init: true
+    read_only: true
+    environment:
+      DOMAIN: ${DOMAIN}
+      WWW_DOMAIN: ${WWW_DOMAIN}
+      NGINX_ENVSUBST_FILTER: ^(DOMAIN|WWW_DOMAIN)$
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/https.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - certbot_webroot:/var/www/certbot:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - web
+    tmpfs:
+      - /var/cache/nginx:size=16m,mode=0755
+      - /var/run:size=1m,mode=0755
+      - /etc/nginx/conf.d:size=1m,mode=0755
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    mem_limit: 64m
+    cpus: 0.20
+    pids_limit: 40
+    logging: *bounded-logging
+
+  nginx-bootstrap:
+    image: nginx:1.28.3-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+    profiles: ["bootstrap"]
+    init: true
+    read_only: true
+    environment:
+      DOMAIN: ${DOMAIN}
+      WWW_DOMAIN: ${WWW_DOMAIN}
+      NGINX_ENVSUBST_FILTER: ^(DOMAIN|WWW_DOMAIN)$
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/http.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - certbot_webroot:/var/www/certbot:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - web
+    tmpfs:
+      - /var/cache/nginx:size=16m,mode=0755
+      - /var/run:size=1m,mode=0755
+      - /etc/nginx/conf.d:size=1m,mode=0755
+    mem_limit: 64m
+    cpus: 0.20
+    pids_limit: 40
+    logging: *bounded-logging
+
+  certbot:
+    image: certbot/certbot:v5.7.0@sha256:34ee91d2f43008eb78a007d22f23ed4b2eaa9a454cb27ca2c042b49527a695b4
+    profiles: ["tls"]
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    networks:
+      - web
+    mem_limit: 128m
+    cpus: 0.25
+    pids_limit: 40
+    logging: *bounded-logging
+
+volumes:
+  next_cache:
+  letsencrypt:
+  certbot_webroot:
+
+networks:
+  web:

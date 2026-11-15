@@ -1,0 +1,204 @@
+"use client";
+
+import { MediaImage } from "@/shared/ui/media/MediaImage";
+import { motion } from "motion/react";
+import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.65,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+};
+
+export function AboutSection() {
+  const { t } = useLanguage();
+
+  return (
+    <section id="about" className="relative w-full bg-black text-white border-b border-white/10 overflow-hidden font-sans">
+      {/* Background Architectural Grid Lines & Crosshairs */}
+      <div className="max-w-[1820px] mx-auto border-l border-r border-white/10 relative">
+        {/* Top Header Row with 10% Opacity Background Photo */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.25, margin: "-40px" }}
+          className="grid min-h-[430px] grid-cols-1 lg:min-h-[600px] lg:grid-cols-12 border-b border-white/10 relative overflow-hidden bg-black"
+        >
+          {/* Background Photo in top half of block */}
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <MediaImage
+              src="/media/2.webp"
+              alt=""
+              fill
+              sizes="(min-width: 1820px) 1820px, 100vw"
+              allowWhenMediaDisabled
+              style={{ opacity: 0.42 }}
+              className="w-full h-full object-cover object-[62%_68%] sm:object-[center_68%] select-none lg:scale-105"
+            />
+            {/* Soft atmospheric gradient only to preserve text contrast on the right */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 lg:bg-gradient-to-r lg:from-black/20 lg:via-black/30 lg:to-black/75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+          </div>
+
+          <motion.div
+            variants={itemVariants}
+            className="lg:col-span-3 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between relative z-10"
+          >
+            <div className="text-3xl sm:text-5xl font-bold text-white flex items-baseline">
+              <span>(01)</span>
+              <span className="text-gradient-red">.</span>
+            </div>
+            <div className="text-xs sm:text-sm text-[#b5b5bd] lg:text-[#8e8e93] uppercase tracking-widest mt-6 sm:mt-10 lg:mt-12 font-medium">
+              {t.about.category}
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="lg:col-span-9 p-5 sm:p-10 lg:p-20 flex flex-col justify-end relative z-10"
+          >
+            <div className="text-left lg:text-right">
+              <span className="text-sm text-[#ea4043] tracking-widest uppercase mb-4 inline-block font-semibold">
+                {t.about.subheading}
+              </span>
+              <h2 className="text-[clamp(2.25rem,11vw,4.5rem)] sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold uppercase tracking-tighter text-white leading-[1.06] pt-1 break-words">
+                {t.about.titleMain}
+                <br />
+                <span className="text-[#3a3a42] hover:text-white transition-colors">{t.about.titleHighlight}</span>
+                {t.about.titleSuffix}
+              </h2>
+              <p className="mt-5 max-w-prose text-base leading-relaxed text-zinc-300 lg:ml-auto">
+                {t.about.intro}
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Spacious 2-Column Architectural Layout (Scale Metrics + Core Rules Manifesto) */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.15, margin: "-50px" }}
+          className="grid grid-cols-1 lg:grid-cols-12 min-h-[580px]"
+        >
+          {/* Left Column: Scale Metrics */}
+          <motion.div
+            variants={itemVariants}
+            className="lg:col-span-7 p-4 sm:p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between bg-black relative"
+          >
+            {/* Mobile: 2x2 App Stat Widgets / Desktop: Giant Stacked Rows */}
+            <div className="grid grid-cols-2 gap-2.5 sm:hidden">
+              {t.about.scaleItems.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-xl border ${
+                    idx === 1
+                      ? "border-white/25 bg-white/[0.06] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                      : "border-white/10 bg-white/[0.02]"
+                  } flex flex-col justify-between min-h-[115px]`}
+                >
+                  <div className="text-3xl font-extrabold tracking-tight text-white flex items-baseline">
+                    <span>{item.num.replace(".", "")}</span>
+                    {item.num.includes(".") && <span className="text-[#ea4043]">.</span>}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#9898a0] leading-tight">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: Giant Stacked Typographic Scale */}
+            <div className="hidden sm:flex font-bold tracking-tighter leading-none select-none flex-col justify-between flex-1 gap-2">
+              {/* Row 1: 00 */}
+              <div className="flex items-baseline justify-between gap-4 py-2 sm:py-3 border-b border-white/5 group hover:border-white/20 transition-colors">
+                <span className="text-[clamp(2.75rem,15vw,6rem)] text-[#2a2a32] group-hover:text-white transition-colors">
+                  00
+                </span>
+                <span className="max-w-[44%] text-xs sm:text-base lg:text-lg font-semibold uppercase tracking-wider text-[#8e8e93] group-hover:text-white transition-colors text-right">
+                  {t.about.scaleItems[0].label}
+                </span>
+              </div>
+
+              {/* Row 2: 01. (Highlighted Main School Metric) */}
+              <div className="flex items-baseline justify-between gap-4 py-2 sm:py-3 border-b border-white/5 group">
+                <div className="text-[clamp(2.75rem,15vw,6rem)] text-white flex items-baseline">
+                  <span>01</span>
+                  <span className="text-gradient-red text-3xl sm:text-5xl lg:text-[4.5rem]">.</span>
+                </div>
+                <span className="max-w-[44%] text-xs sm:text-base lg:text-lg font-semibold uppercase tracking-wider text-white text-right">
+                  {t.about.scaleItems[1].label}
+                </span>
+              </div>
+
+              {/* Row 3: 100% */}
+              <div className="flex items-baseline justify-between gap-4 py-2 sm:py-3 border-b border-white/5 group hover:border-white/20 transition-colors">
+                <span className="text-[clamp(2.75rem,15vw,6rem)] text-[#33333d] group-hover:text-white transition-colors">
+                  {t.about.scaleItems[2].num}
+                </span>
+                <span className="max-w-[44%] text-xs sm:text-base lg:text-lg font-semibold uppercase tracking-wider text-[#8e8e93] group-hover:text-white transition-colors text-right">
+                  {t.about.scaleItems[2].label}
+                </span>
+              </div>
+
+              {/* Row 4: BMW M */}
+              <div className="flex items-baseline justify-between gap-4 py-2 sm:py-3 group hover:border-white/20 transition-colors">
+                <span className="text-[clamp(2.75rem,15vw,6rem)] text-[#22222a] group-hover:text-white transition-colors">
+                  {t.about.scaleItems[3].num}
+                </span>
+                <span className="max-w-[44%] text-xs sm:text-base lg:text-lg font-semibold uppercase tracking-wider text-[#8e8e93] group-hover:text-white transition-colors text-right">
+                  {t.about.scaleItems[3].label}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right Column: CORE RULES Manifesto */}
+          <motion.div
+            variants={itemVariants}
+            className="lg:col-span-5 p-4 sm:p-10 lg:p-16 flex flex-col justify-between bg-black relative"
+          >
+            {/* Manifesto Cards */}
+            <div className="flex flex-col justify-between gap-3 sm:gap-5 h-full flex-1">
+              {t.about.rules.map((rule, idx) => (
+                <div
+                  key={idx}
+                  className="flex-1 p-4 sm:p-6 lg:p-7 bg-white/[0.03] border border-white/10 hover:border-[#ea4043]/40 rounded-xl transition-colors group flex flex-col justify-center"
+                >
+                  <h3 className="text-white font-bold text-sm sm:text-lg uppercase tracking-tight mb-1.5 group-hover:text-white transition-colors">
+                    {rule.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#a0a0a8] leading-relaxed font-light">
+                    {rule.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
