@@ -3263,7 +3263,7 @@ __metadata:
     lucide-react: "npm:^1.33.0"
     motion: "npm:^13.0.0"
     next: "npm:16.3.3"
-    react: "npm:19.2.4"
+    react: "npm:19.3.1"
     react-dom: "npm:19.2.4"
     tailwindcss: "npm:^4"
     typescript: "npm:^5"
@@ -3730,10 +3730,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
+"react@npm:19.3.1":
+  version: 19.3.1
+  resolution: "react@npm:19.3.1"
+  checksum: 10c0/f0ed036d1223562c09c8347858ca712733ea6e27a30db709ee9c3f3f176d3e9e767afce735d59956addf3d030102e256bba82dea635fc1bdb0e01107e98fef10
   languageName: node
   linkType: hard
 
