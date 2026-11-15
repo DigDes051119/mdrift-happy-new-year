@@ -18,30 +18,25 @@ type SnowflakeStyle = CSSProperties & {
   "--snow-size": string;
   "--snow-duration": string;
   "--snow-delay": string;
-  "--snow-opacity": number;
   "--snow-drift": string;
 };
 
 export function Snowfall() {
   return (
     <div className={styles.layer} aria-hidden="true">
-      {snowflakes.map((flake) => (
-        <span
-          key={flake.id}
-          className={styles.flake}
-          style={
-            {
-              "--snow-left": flake.left,
-              "--snow-top": flake.top,
-              "--snow-size": flake.size,
-              "--snow-duration": flake.duration,
-              "--snow-delay": flake.delay,
-              "--snow-opacity": flake.opacity,
-              "--snow-drift": flake.drift,
-            } satisfies SnowflakeStyle
-          }
-        />
-      ))}
+      {snowflakes.map((flake) => {
+        const style = {
+          "--snow-left": flake.left,
+          "--snow-top": flake.top,
+          "--snow-size": flake.size,
+          "--snow-duration": flake.duration,
+          "--snow-delay": flake.delay,
+          "--snow-drift": flake.drift,
+          opacity: flake.opacity,
+        } satisfies SnowflakeStyle;
+
+        return <span key={flake.id} className={styles.flake} style={style} />;
+      })}
     </div>
   );
 }

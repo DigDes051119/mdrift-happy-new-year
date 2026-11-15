@@ -14,7 +14,6 @@
   height: var(--snow-size);
   border-radius: 9999px;
   background: #f5faff;
-  opacity: var(--snow-opacity);
   animation: snow-fall var(--snow-duration) linear var(--snow-delay) infinite;
 }
 
