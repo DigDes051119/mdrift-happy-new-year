@@ -16,7 +16,7 @@ interface HeroSectionProps {
 }
 
 const HERO_VIDEOS = [
-  { mp4: `/media/${encodeURIComponent("Видео для блока #1.mp4")}` },
+  { mp4: "/media/video-for-block-1.mp4" },
 ] as const;
 
 export function HeroSection({

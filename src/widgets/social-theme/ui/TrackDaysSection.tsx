@@ -9,7 +9,7 @@ interface TrackDaysSectionProps {
 }
 
 const TRACK_DAYS_CLIPS = [
-  { mp4: `/media/${encodeURIComponent("видео для блока #6.mp4")}` },
+  { mp4: "/media/video-for-block-6.mp4" },
 ] as const;
 
 const containerVariants = {
